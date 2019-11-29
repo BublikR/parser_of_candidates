@@ -42,7 +42,7 @@ def getName(url):
         return None
     try:
         soup = BeautifulSoup(html, features="lxml")
-        name_list = [name.get_text() for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
+        name_list = [tuple(name.get_text().split()) for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
     except AttributeError as e:
         return None
     return name_list
