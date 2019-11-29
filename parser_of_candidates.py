@@ -35,8 +35,22 @@ def getAllLinks(url):
         return None
     return all_link_list
 
+def getName(url):
+    try:
+        html = urlopen(url)
+    except HTTPError as e:
+        return None
+    try:
+        soup = BeautifulSoup(html, features="lxml")
+        name_list = [name.get_text() for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
+    except AttributeError as e:
+        return None
+    return name_list
+
 def main():
-    print(getAllLinks("https://www.cvk.gov.ua/pls/vnd2019/wp401pt001f01=919lit=192current_row=1.html"))
+    url_list = getAllLinks("https://www.cvk.gov.ua/pls/vnd2019/wp401pt001f01=919lit=192current_row=1.html")
+    for url in url_list:
+        print(getName(url))
 
 
 if __name__ == "__main__":
