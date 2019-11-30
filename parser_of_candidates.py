@@ -48,7 +48,7 @@ def getNamePartyNumber(url_list):
         try:
             soup = BeautifulSoup(html, features="lxml")
             # Getting names
-            name_list = [tuple(name.get_text().split()) for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
+            name_list = [tuple(name.get_text().split(maxsplit=2)) for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
             # Getting party and number
             temp = soup.findAll("td")
             temp = [t.find("b") for t in temp]
