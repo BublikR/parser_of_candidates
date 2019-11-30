@@ -2,6 +2,7 @@ from urllib.request import urlopen
 from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 import re
+import functools
 
 # Getting links to number pages
 def getPagesLinks(url):
@@ -35,22 +36,25 @@ def getAllLinks(url):
         return None
     return all_link_list
 
-def getName(url):
-    try:
-        html = urlopen(url)
-    except HTTPError as e:
-        return None
-    try:
-        soup = BeautifulSoup(html, features="lxml")
-        name_list = [tuple(name.get_text().split()) for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
-    except AttributeError as e:
-        return None
-    return name_list
+def getNamePartyNumber(url_list):
+    result_list = []
+    for url in url_list:
+        try:
+            html = urlopen(url)
+        except HTTPError as e:
+            return None
+        try:
+            soup = BeautifulSoup(html, features="lxml")
+            name_list = [tuple(name.get_text().split()) for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
+            party_and_number = [tuple(i.get_text().split(", ")) for i in soup.findAll("b")]
+            result_list.extend(functools.reduce(lambda a,b: a+b, i) for i in zip(name_list, party_and_number))
+        except AttributeError as e:
+            return None
+    return result_list
 
 def main():
     url_list = getAllLinks("https://www.cvk.gov.ua/pls/vnd2019/wp401pt001f01=919lit=192current_row=1.html")
-    for url in url_list:
-        print(getName(url))
+    print(getNamePartyNumber(url_list))
 
 
 if __name__ == "__main__":
