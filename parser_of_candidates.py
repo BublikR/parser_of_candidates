@@ -3,6 +3,7 @@ from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 import re
 import functools
+import xlwt
 
 # Getting links to number pages
 def getPagesLinks(url):
@@ -36,6 +37,7 @@ def getAllLinks(url):
         return None
     return all_link_list
 
+# Getting list of full name, party and number
 def getNamePartyNumber(url_list):
     result_list = []
     for url in url_list:
@@ -45,8 +47,13 @@ def getNamePartyNumber(url_list):
             return None
         try:
             soup = BeautifulSoup(html, features="lxml")
+            # Getting names
             name_list = [tuple(name.get_text().split()) for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
-            party_and_number = [tuple(i.get_text().split(", ")) for i in soup.findAll("b")]
+            # Getting party and number
+            temp = soup.findAll("td")
+            temp = [t.find("b") for t in temp]
+            party_and_number = [tuple(i.get_text().split(", ")) for i in temp if i != None]
+            # Aggregate
             result_list.extend(functools.reduce(lambda a,b: a+b, i) for i in zip(name_list, party_and_number))
         except AttributeError as e:
             return None
