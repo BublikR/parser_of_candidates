@@ -59,10 +59,22 @@ def getNamePartyNumber(url_list):
             return None
     return result_list
 
+# Writing in excel-file
+def writeExcel(info_list):
+    wb = xlwt.Workbook()
+    sheet = wb.add_sheet("Candidates")
+    # Column titles
+    title_list = ["Прізвище", "Ім'я", "По-батькові", "Партія", "Номер у списку"]
+    for c in range(len(title_list)):
+        sheet.write(0, c, title_list[c])
+    # Fill in information
+    for r in range(1, len(info_list)+1):
+        for c in range(len(info_list[0])):
+            sheet.write(r, c, info_list[r-1][c])
+    wb.save("Candidates.xls")
+
 def main():
     url_list = getAllLinks("https://www.cvk.gov.ua/pls/vnd2019/wp401pt001f01=919lit=192current_row=1.html")
-    print(getNamePartyNumber(url_list))
-
 
 if __name__ == "__main__":
     main()
