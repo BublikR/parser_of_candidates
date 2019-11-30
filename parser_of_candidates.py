@@ -49,6 +49,9 @@ def getNamePartyNumber(url_list):
             soup = BeautifulSoup(html, features="lxml")
             # Getting names
             name_list = [tuple(name.get_text().split(maxsplit=2)) for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
+            for index, val in enumerate(name_list):
+                if len(val) < 3:
+                    name_list[index] = val + ('',)
             # Getting party and number
             temp = soup.findAll("td")
             temp = [t.find("b") for t in temp]
@@ -75,6 +78,7 @@ def writeExcel(info_list):
 
 def main():
     url_list = getAllLinks("https://www.cvk.gov.ua/pls/vnd2019/wp401pt001f01=919lit=192current_row=1.html")
+    writeExcel(getNamePartyNumber(url_list))
 
 if __name__ == "__main__":
     main()
