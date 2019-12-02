@@ -49,6 +49,7 @@ def getNamePartyNumber(url_list):
             soup = BeautifulSoup(html, features="lxml")
             # Getting names
             name_list = [tuple(name.get_text().split(maxsplit=2)) for name in soup.findAll("a", {"href": re.compile("^wp407.*")})]
+            # If middle name absent
             for index, val in enumerate(name_list):
                 if len(val) < 3:
                     name_list[index] = val + ('',)
